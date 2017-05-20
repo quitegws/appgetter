@@ -10,7 +10,7 @@ import logging
 from lxml import html
 
 class BaiduZhushouSpider(scrapy.Spider):
-    name = 'bdzscrawler'
+    name = 'baiduzhushou'
     allowed_domains = ['shouji.baidu.com']
     start_urls = ['http://shouji.baidu.com/software/501/']
 
@@ -45,11 +45,13 @@ class BaiduZhushouSpider(scrapy.Spider):
             if next_page_link not in page_lists_links:
                 page_lists_links.append(next_page_link)
 
-        curdir = 'shoujibaidu/' + kind + '/' + sub_kind + '/'
+        sep = os.sep
+        linesep = os.linesep
+        curdir = 'shoujibaidu' + sep + kind + sep + sub_kind + sep
         os.makedirs(curdir, 0o777, True)
         time = datetime.datetime.now().strftime("%Y%m%d_%H-%M-%S")
         f = open(curdir + time + '.csv', 'w')
-        # writer = csv.writer(f)
+        writer = csv.writer(f)
 
         for u in page_lists_links:
             url = cur_url + u
@@ -65,7 +67,8 @@ class BaiduZhushouSpider(scrapy.Spider):
                 except Exception as e:
                     logging(e)
                     app_name = 'null'
-                f.write(app_name + '\n')
-                # writer.writerow([app_name])
+                # f.write(app_name + linesep)
+                writer.writerow([app_name])
 
         f.close()
+        writer.close
